@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :messages
   resources :applications, param: :token do
     resources :chats, param: :num
   end
