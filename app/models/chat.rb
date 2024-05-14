@@ -1,5 +1,4 @@
 class Chat < ApplicationRecord
   belongs_to :application
-  attr_accessor :num
-
+  has_many :messages
 end

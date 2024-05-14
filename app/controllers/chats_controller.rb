@@ -8,6 +8,15 @@ class ChatsController < ApplicationController
     render json: @chats
   end
 
+  def show
+    @chat = @application.chats.find_by(num: params[:num])
+
+    respond_to do |format|
+      # format.html # Render HTML view (if needed)
+      format.json { render json: @chat }
+    end
+  end
+
   def create
     current_chat_count = @application.chats_count
     new_chat_num = current_chat_count + 1
