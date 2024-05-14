@@ -5,7 +5,7 @@ FROM ruby:3.0.2-buster
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         build-essential \
-        default-libmysqlclient-dev\
+        libpq-dev \
         nodejs \
         tzdata && \
     rm -rf /var/lib/apt/lists/*
@@ -26,4 +26,5 @@ COPY . .
 EXPOSE 3000
 
 # Start the Rails server
-CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
+# CMD ["bundle", "exec", "rails", "db:migrate", "&&", "bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
+CMD bash -c 'bundle exec rails db:create db:migrate && bundle exec rails server -b 0.0.0.0'
