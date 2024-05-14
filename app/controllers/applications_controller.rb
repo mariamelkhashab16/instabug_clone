@@ -33,10 +33,10 @@ class ApplicationsController < ApplicationController
 
     respond_to do |format|
       if @application.save
-        # format.html { redirect_to application_url(@application), notice: "Application was successfully created." }
+        format.html { redirect_to application_url(@application), notice: "Application was successfully created." }
         format.json { render json: { token: @application.token }, status: :created, location: @application }
       else
-        # format.html { render :new, status: :unprocessable_entity }
+        format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @application.errors, status: :unprocessable_entity }
       end
     end
