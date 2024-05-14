@@ -1,4 +1,5 @@
 class ApplicationsController < ApplicationController
+  skip_before_action :verify_authenticity_token
   before_action :set_application, only: %i[ show edit update destroy ]
 
   # GET /applications or /applications.json
@@ -8,7 +9,14 @@ class ApplicationsController < ApplicationController
 
   # GET /applications/1 or /applications/1.json
   def show
+    @application = Application.find_by(token: params[:token])
+    
+    respond_to do |format|
+      # format.html # Render HTML view (if needed)
+      format.json { render json: @application }
+    end
   end
+  
 
   # GET /applications/new
   def new
@@ -21,14 +29,14 @@ class ApplicationsController < ApplicationController
 
   # POST /applications or /applications.json
   def create
-    @application = Application.new(application_params)
+    @application = Application.new(name: application_params[:name], token: generate_token)
 
     respond_to do |format|
       if @application.save
-        format.html { redirect_to application_url(@application), notice: "Application was successfully created." }
-        format.json { render :show, status: :created, location: @application }
+        # format.html { redirect_to application_url(@application), notice: "Application was successfully created." }
+        format.json { render json: { token: @application.token }, status: :created, location: @application }
       else
-        format.html { render :new, status: :unprocessable_entity }
+        # format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @application.errors, status: :unprocessable_entity }
       end
     end
@@ -38,10 +46,10 @@ class ApplicationsController < ApplicationController
   def update
     respond_to do |format|
       if @application.update(application_params)
-        format.html { redirect_to application_url(@application), notice: "Application was successfully updated." }
+        # format.html { redirect_to application_url(@application), notice: "Application was successfully updated." }
         format.json { render :show, status: :ok, location: @application }
       else
-        format.html { render :edit, status: :unprocessable_entity }
+        # format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @application.errors, status: :unprocessable_entity }
       end
     end
@@ -52,7 +60,7 @@ class ApplicationsController < ApplicationController
     @application.destroy!
 
     respond_to do |format|
-      format.html { redirect_to applications_url, notice: "Application was successfully destroyed." }
+      # format.html { redirect_to applications_url, notice: "Application was successfully destroyed." }
       format.json { head :no_content }
     end
   end
@@ -60,11 +68,16 @@ class ApplicationsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_application
-      @application = Application.find(params[:id])
+      @application = Application.find_by(token: params[:token])
     end
 
     # Only allow a list of trusted parameters through.
     def application_params
-      params.require(:application).permit(:name, :token, :chats_count)
+      params.require(:application).permit(:name)
+    end
+
+    private
+    def generate_token
+      SecureRandom.hex(16)
     end
 end
