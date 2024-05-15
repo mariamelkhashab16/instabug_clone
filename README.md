@@ -1,15 +1,12 @@
-# README
+# Restful chat messaging application
 
-This application is dockerized for easier setup and deployment. Follow these steps to run the application using Docker:
+This app is dockerized for easier setup and deployment. Follow these steps to run the application using Docker:
 
 1. Make sure you have Docker installed on your system.
 2. Clone the repository to your local machine
 3. Navigate to the project directory
 5. Start the Docker containers: sudo docker-compose up
 
-## Features
-
-This app is a restful chat messaging app.
 
 ## Technicalities covered
 
