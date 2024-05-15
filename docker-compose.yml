@@ -8,6 +8,7 @@ services:
     depends_on:
       - db
       - redis
+      - elasticsearch
     environment:
       DATABASE_ADAPTER: ${DATABASE_ADAPTER}
       DATABASE_POOL: ${DATABASE_POOL}
@@ -17,10 +18,9 @@ services:
       DATABASE_TIMEOUT: ${DATABASE_TIMEOUT}
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PORT: ${REDIS_PORT}
+      ELASTICSEARCH_URL: http://elasticsearch:9200
     volumes:
       - .:/app
-
-
   db:
     image: postgres:latest
     environment:
@@ -36,6 +36,15 @@ services:
     image: redis:latest
     ports:
       - "6379:6379"
-
+  
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    ports:
+      - "9200:9200"
+      - "9300:9300"
 volumes:
   pg_data:
