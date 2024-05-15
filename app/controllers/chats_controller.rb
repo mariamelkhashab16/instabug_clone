@@ -18,18 +18,8 @@ class ChatsController < ApplicationController
   end
 
   def create
-    @application.with_lock do
-      current_chat_count = @application.chats_count
-      new_chat_num = current_chat_count + 1
-      @chat = @application.chats.new(num: new_chat_num)
-    
-      if @chat.save
-        @application.increment!(:chats_count)
-        render json: @chat, status: :created
-      else
-        render json: @chat.errors, status: :unprocessable_entity
-      end
-    end
+    CreateChatJob.perform_later(@application)
+    render json: { message: 'Chat creation queued' }, status: :accepted
   end
   
   

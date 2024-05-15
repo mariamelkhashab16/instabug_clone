@@ -25,7 +25,7 @@ class MessagesController < ApplicationController
     message_content = message_params['content']
 
     # Enqueue a job to create the message asynchronously
-    CreateChatMessageJob.perform_later(@chat.id, message_content)
+    CreateChatMessageJob.perform_later(@chat, message_content)
 
     render json: { message: 'Chat message creation queued' }, status: :accepted
   end

@@ -2,8 +2,7 @@
 class CreateChatMessageJob < ApplicationJob
   queue_as :default
 
-  def perform(chat_id, message_content)
-    chat = Chat.find(chat_id)
+  def perform(chat, message_content)
 
     chat.with_lock do
     # Create the message
