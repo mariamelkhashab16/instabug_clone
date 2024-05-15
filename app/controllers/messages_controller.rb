@@ -21,20 +21,14 @@ class MessagesController < ApplicationController
 
   # POST /messages or /messages.json
   def create
-    @chat.with_lock do
-    current_msg_count = @chat.msgs_count
-    new_msg_num = current_msg_count + 1
-    @msg = @chat.messages.new(msg_no: new_msg_num,content:message_params['content'])
-  
-    if @msg.save
-      @chat.increment!(:msgs_count)
-      render json: @msg, status: :created
-    else
-      render json: @msg.errors, status: :unprocessable_entity
-    end
-  end
-end 
+    # Extract message content from params
+    message_content = message_params['content']
 
+    # Enqueue a job to create the message asynchronously
+    CreateChatMessageJob.perform_later(@chat.id, message_content)
+
+    render json: { message: 'Chat message creation queued' }, status: :accepted
+  end
   # PATCH/PUT /messages/1 or /messages/1.json
   def update
     respond_to do |format|
