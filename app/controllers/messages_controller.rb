@@ -21,6 +21,7 @@ class MessagesController < ApplicationController
 
   # POST /messages or /messages.json
   def create
+    @chat.with_lock do
     current_msg_count = @chat.msgs_count
     new_msg_num = current_msg_count + 1
     @msg = @chat.messages.new(msg_no: new_msg_num,content:message_params['content'])
@@ -32,6 +33,7 @@ class MessagesController < ApplicationController
       render json: @msg.errors, status: :unprocessable_entity
     end
   end
+end 
 
   # PATCH/PUT /messages/1 or /messages/1.json
   def update

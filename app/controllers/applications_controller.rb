@@ -45,15 +45,17 @@ class ApplicationsController < ApplicationController
   # PATCH/PUT /applications/1 or /applications/1.json
   def update
     respond_to do |format|
-      if @application.update(application_params)
-        # format.html { redirect_to application_url(@application), notice: "Application was successfully updated." }
-        format.json { render :show, status: :ok, location: @application }
-      else
-        # format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @application.errors, status: :unprocessable_entity }
+      ActiveRecord::Base.transaction do
+        if @application.with_lock(true) { @application.update(application_params) }
+          format.json { render :show, status: :ok, location: @application }
+        else
+          format.json { render json: @application.errors, status: :unprocessable_entity }
+        end
       end
     end
   end
+  
+  
 
   # DELETE /applications/1 or /applications/1.json
   def destroy
