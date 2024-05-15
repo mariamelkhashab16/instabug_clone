@@ -1,24 +1,20 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This application is dockerized for easier setup and deployment. Follow these steps to run the application using Docker:
 
-Things you may want to cover:
+1. Make sure you have Docker installed on your system.
+2. Clone the repository to your local machine
+3. Navigate to the project directory
+5. Start the Docker containers: sudo docker-compose up
 
-* Ruby version
+## Features
 
-* System dependencies
+This app is a restful chat messaging app.
 
-* Configuration
+## Technicalities covered
 
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+1. Using Postgres as main database adapter
+2. Restful CRUD APIs for application, chat & messaging models
+3. Using elastic search to search for messages in a chat by message content
+4. Database level locking to handle race conditions
+5. Message queuing using Redis as a broker on chat and message creations
