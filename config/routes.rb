@@ -2,7 +2,11 @@ Rails.application.routes.draw do
   resources :messages
   resources :applications, param: :token do
     resources :chats, param: :num do
-      resources :messages, param: :msg_no
+      resources :messages, param: :msg_no do
+        collection do
+          post 'search/', to: 'messages#search'
+        end
+      end
     end
   end
 

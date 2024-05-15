@@ -17,6 +17,8 @@ services:
       DATABASE_TIMEOUT: ${DATABASE_TIMEOUT}
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PORT: ${REDIS_PORT}
+    volumes:
+      - .:/app
 
 
   db:

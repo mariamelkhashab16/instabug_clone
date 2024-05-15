@@ -27,4 +27,4 @@ EXPOSE 3000
 
 # Start the Rails server
 # CMD ["bundle", "exec", "rails", "db:migrate", "&&", "bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
-CMD bash -c 'bundle exec rails db:create db:migrate && bundle exec rails server -b 0.0.0.0'
+CMD bash -c 'rm -f /app/tmp/pids/server.pid && bundle exec rails db:create db:migrate && bundle exec rails server -b 0.0.0.0'

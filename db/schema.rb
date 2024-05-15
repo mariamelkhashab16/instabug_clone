@@ -11,33 +11,33 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[7.1].define(version: 2024_05_14_135133) do
-  create_table "applications", charset: "latin1", force: :cascade do |t|
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "applications", force: :cascade do |t|
     t.string "name"
     t.string "token"
     t.integer "chats_count", default: 0
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  create_table "chats", charset: "latin1", force: :cascade do |t|
+  create_table "chats", force: :cascade do |t|
     t.bigint "application_id", null: false
     t.integer "num", default: 0
     t.integer "msgs_count", default: 0
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["application_id"], name: "index_chats_on_application_id"
   end
 
-  create_table "messages", charset: "latin1", force: :cascade do |t|
+  create_table "messages", force: :cascade do |t|
     t.bigint "chat_id", null: false
     t.integer "msg_no", default: 0
     t.text "content"
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["chat_id"], name: "index_messages_on_chat_id"
-  end
-
-  create_table "test", id: :integer, default: nil, charset: "latin1", force: :cascade do |t|
   end
 
   add_foreign_key "chats", "applications"

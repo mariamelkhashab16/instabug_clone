@@ -46,6 +46,19 @@ class MessagesController < ApplicationController
     end
   end
 
+  def search 
+    filter = JSON.parse(request.body.read)
+    search_by_content = filter['content']
+    @messages = @chat.messages.where("content LIKE ?", "%#{search_by_content}%")
+    # @messages = @chat.messages.search({
+    #     query: {
+    #       match: {
+    #         "content": search_by_content # Assuming 'content' is the attribute containing the message content
+    #       }
+    #     }
+    #   }).records
+      render json: @messages
+  end
   # DELETE /messages/1 or /messages/1.json
   def destroy
     @message.destroy!
