@@ -18,7 +18,7 @@ services:
       DATABASE_TIMEOUT: ${DATABASE_TIMEOUT}
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PORT: ${REDIS_PORT}
-      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_URL: ${ELASTICSEARCH_URL}
     volumes:
       - .:/app
   db:
@@ -46,5 +46,6 @@ services:
     ports:
       - "9200:9200"
       - "9300:9300"
+  
 volumes:
   pg_data:
