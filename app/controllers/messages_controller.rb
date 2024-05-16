@@ -1,7 +1,7 @@
 class MessagesController < ApplicationController
   skip_before_action :verify_authenticity_token
-  before_action :set_application
-  before_action :set_chat
+  before_action :set_application, :set_chat
+  # before_action :set_chat
 
   # GET /messages or /messages.json
   def index
@@ -47,12 +47,30 @@ class MessagesController < ApplicationController
     search_by_content = filter['content']
     # @messages = @chat.messages.where("content LIKE ?", "%#{search_by_content}%")
     @messages = @chat.messages.search({
-        query: {
-          match: {
-            "content": search_by_content # Assuming 'content' is the attribute containing the message content
+      query: {
+        bool: {
+          must: {
+            match: {
+              "content": search_by_content
+            }
+          },
+          filter: {
+            term: {
+              "chat_id": @chat.id
+            }
           }
         }
-      }).records
+      }
+    }).records
+  
+      # @messages = @messages.map do |message|
+      #   {
+      #     id: message.id,
+      #     content: message.content,
+      #     chat_id: message.chat_id,
+      #     application_id: message.chat.application_id, # Access application ID through chat association
+      #   }
+      # end
       render json: @messages
   end
   # DELETE /messages/1 or /messages/1.json

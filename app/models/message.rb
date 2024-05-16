@@ -8,12 +8,13 @@ class Message < ApplicationRecord
   settings index: { number_of_shards: 1 } do
     mappings dynamic: false do
       indexes :content, type: 'text'
+      indexes :chat_id, type: 'keyword'
     end
   end
 
   # Customize the JSON representation of your model for indexing
   def as_indexed_json(options = {})
-    self.as_json(only: [:content])
+    self.as_json(only: [:content,:chat_id])
   end
 
 Message.__elasticsearch__.create_index! force: true
