@@ -1,19 +1,28 @@
 class MessagesController < ApplicationController
   skip_before_action :verify_authenticity_token
   before_action :set_application, :set_chat
-  # before_action :set_chat
+  before_action :set_chat
 
   # GET /messages or /messages.json
   def index
-    @msgs =@chat.messages
-    render json: @msgs
+    @messages =@chat.messages
+    @messages = @messages.map do |message|
+      {
+        num: message.msg_no,
+        content: message.content,
+        chat_num: message.chat.num,
+        application_token: message.chat.application.token,
+        created_at: message.created_at,
+        updated_at: message.updated_at
+      }
+    end
+    render json: @messages
   end
 
   # GET /messages/1 or /messages/1.json
   def show
     @message = @chat.messages.find_by(msg_no:params['msg_no'])
     respond_to do |format|
-      # format.html # Render HTML view (if needed)
       format.json { render json: @message }
     end
   end
@@ -21,22 +30,18 @@ class MessagesController < ApplicationController
 
   # POST /messages or /messages.json
   def create
-    # Extract message content from params
     message_content = message_params['content']
-
     # Enqueue a job to create the message asynchronously
     CreateChatMessageJob.perform_later(@chat, message_content)
-
     render json: { message: 'Chat message creation queued' }, status: :accepted
   end
+
   # PATCH/PUT /messages/1 or /messages/1.json
   def update
     respond_to do |format|
       if @message.update(message_params)
-        # format.html { redirect_to message_url(@message), notice: "Message was successfully updated." }
         format.json { render :show, status: :ok, location: @message }
       else
-        # format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @message.errors, status: :unprocessable_entity }
       end
     end
@@ -45,40 +50,42 @@ class MessagesController < ApplicationController
   def search 
     filter = JSON.parse(request.body.read)
     search_by_content = filter['content']
-    # @messages = @chat.messages.where("content LIKE ?", "%#{search_by_content}%")
+    # @messages = @chat.messages.where("content LIKE ?", "%#{search_by_content}%") # rom search
+    # elastic search
     @messages = @chat.messages.search({
       query: {
         bool: {
-          must: {
-            match: {
-              "content": search_by_content
-            }
-          },
           filter: {
             term: {
               "chat_id": @chat.id
+            }
+          },
+          must: {
+            match: {
+              "content": search_by_content
             }
           }
         }
       }
     }).records
-  
-      # @messages = @messages.map do |message|
-      #   {
-      #     id: message.id,
-      #     content: message.content,
-      #     chat_id: message.chat_id,
-      #     application_id: message.chat.application_id, # Access application ID through chat association
-      #   }
-      # end
+      @messages = @messages.map do |message|
+        {
+          num: message.msg_no,
+          content: message.content,
+          chat_num: message.chat.num,
+          application_token: message.chat.application.token,
+          created_at: message.created_at,
+          updated_at: message.updated_at
+        }
+      end
       render json: @messages
   end
   # DELETE /messages/1 or /messages/1.json
+
   def destroy
     @message.destroy!
 
     respond_to do |format|
-      # format.html { redirect_to messages_url, notice: "Message was successfully destroyed." }
       format.json { head :no_content }
     end
   end

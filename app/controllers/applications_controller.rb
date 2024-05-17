@@ -5,41 +5,41 @@ class ApplicationsController < ApplicationController
   # GET /applications or /applications.json
   def index
     @applications = Application.all
+    @applications = @applications.map do |application|
+      {
+        name: application.name,
+        token: application.token,
+        chats_count: application.chats_count,
+        created_at: application.created_at,
+        updated_at: application.updated_at
+      }
+    end
+    render json: @applications
   end
 
   # GET /applications/1 or /applications/1.json
   def show
-    @application = Application.find_by(token: params[:token])
-    
-    respond_to do |format|
-      # format.html # Render HTML view (if needed)
-      format.json { render json: @application }
-    end
+    @application = Application.find_by(token: params[:token]) 
+    response = {name: @application.name,
+              token: @application.token,
+              chats_count: @application.chats_count,
+              created_at: @application.created_at,
+              updated_at: @application.updated_at
+          }   
+    render json: response
   end
   
-
-  # GET /applications/new
-  def new
-    @application = Application.new
-  end
-
-  # GET /applications/1/edit
-  def edit
-  end
-
   # POST /applications or /applications.json
   def create
     @application = Application.new(name: application_params[:name], token: generate_token)
 
     respond_to do |format|
-      if @application.save
-        # format.html { redirect_to application_url(@application), notice: "Application was successfully created." }
-        format.json { render json: { token: @application.token }, status: :created, location: @application }
-      else
-        # format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @application.errors, status: :unprocessable_entity }
-      end
+    if @application.save
+      format.json { render json: { token: @application.token }, status: :created, location: @application }
+    else
+      format.json { render json: @application.errors, status: :unprocessable_entity }
     end
+  end
   end
 
   # PATCH/PUT /applications/1 or /applications/1.json
@@ -47,7 +47,14 @@ class ApplicationsController < ApplicationController
     respond_to do |format|
       ActiveRecord::Base.transaction do
         if @application.with_lock(true) { @application.update(application_params) }
-          format.json { render :show, status: :ok, location: @application }
+        updated_application = @application.reload # gets the latest changes
+        response =   {name: updated_application.name,
+                token: updated_application.token,
+                chats_count: updated_application.chats_count,
+                created_at: updated_application.created_at,
+                updated_at: updated_application.updated_at
+        }
+          format.json { render json: response, status: :ok }
         else
           format.json { render json: @application.errors, status: :unprocessable_entity }
         end
@@ -60,9 +67,7 @@ class ApplicationsController < ApplicationController
   # DELETE /applications/1 or /applications/1.json
   def destroy
     @application.destroy!
-
     respond_to do |format|
-      # format.html { redirect_to applications_url, notice: "Application was successfully destroyed." }
       format.json { head :no_content }
     end
   end

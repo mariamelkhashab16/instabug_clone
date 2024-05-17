@@ -5,21 +5,29 @@ class ChatsController < ApplicationController
   # GET /applications/:token/chats
   def index
     @chats = @application.chats
+    @chats = @chats.map do |chat|
+      {
+        chat_num: chat.num,
+        count: chat.msgs_count,
+        application_token: chat.application.token,
+        created_at: chat.created_at,
+        updated_at: chat.updated_at
+      }
+    end
     render json: @chats
   end
 
   def show
     @chat = @application.chats.find_by(num: params[:num])
-
     respond_to do |format|
-      # format.html # Render HTML view (if needed)
       format.json { render json: @chat }
     end
   end
 
   def create
+    # Enqueue a job to create the chat asynchronously
     CreateChatJob.perform_later(@application)
-    render json: { message: 'Chat creation queued' }, status: :accepted
+    render json: { chat: 'Chat creation queued' }, status: :accepted
   end
   
   

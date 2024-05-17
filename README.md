@@ -4,8 +4,10 @@ This app is dockerized for easier setup and deployment. Follow these steps to ru
 
 1. Make sure you have Docker installed on your system.
 2. Clone the repository to your local machine
+    ```git clone https://github.com/mariamelkhashab16/instabug_clone.git
 3. Navigate to the project directory
-5. Start the Docker containers: sudo docker-compose up
+5. Start the Docker containers
+    ```sudo docker-compose up
 
 
 ## Technicalities covered
@@ -14,4 +16,4 @@ This app is dockerized for easier setup and deployment. Follow these steps to ru
 2. Restful CRUD APIs for application, chat & messaging models
 3. Using elastic search to search for messages in a chat by message content
 4. Database level locking to handle race conditions
-5. Message queuing using Redis as a broker on chat and message creations
+5. Message queuing on chat and message creations using rails queing framwork: Active Job 
