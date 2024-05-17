@@ -9,8 +9,10 @@ class CreateChatJob < ApplicationJob
     
       if chat.save
         application.increment!(:chats_count)
+        return new_chat_num
       else
         Rails.logger.error "Failed to create chat: #{msg.errors.full_messages.to_sentence}"
+        return nil
       end
     end
 

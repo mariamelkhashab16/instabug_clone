@@ -32,8 +32,20 @@ class MessagesController < ApplicationController
   def create
     message_content = message_params['content']
     # Enqueue a job to create the message asynchronously
-    CreateChatMessageJob.perform_later(@chat, message_content)
-    render json: { message: 'Chat message creation queued' }, status: :accepted
+    new_msg = CreateChatMessageJob.perform_now(@chat, message_content)  # Perform the job synchronously to retrieve the new message number
+    if new_msg.present?
+      result =  {
+        num: new_msg.msg_no,
+        content: new_msg.content,
+        chat_num: new_msg.chat.num,
+        application_token: new_msg.chat.application.token,
+        created_at: new_msg.created_at,
+        updated_at: new_msg.updated_at
+      }
+      render json: { message: "Message created successfully", new_message: result }, status: :created
+    else
+      render json: { error: 'Failed to create message' }, status: :unprocessable_entity
+    end  
   end
 
   # PATCH/PUT /messages/1 or /messages/1.json

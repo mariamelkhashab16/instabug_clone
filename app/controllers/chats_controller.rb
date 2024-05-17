@@ -25,9 +25,12 @@ class ChatsController < ApplicationController
   end
 
   def create
-    # Enqueue a job to create the chat asynchronously
-    CreateChatJob.perform_later(@application)
-    render json: { chat: 'Chat creation queued' }, status: :accepted
+    new_chat_num = CreateChatJob.perform_now(@application)  # Perform the job synchronously to retrieve the new chat number
+    if new_chat_num.present?
+      render json: { message: "chat created successfully",chat_number: new_chat_num }, status: :created
+    else
+      render json: { error: 'Failed to create chat' }, status: :unprocessable_entity
+    end
   end
   
   
