@@ -6,9 +6,12 @@ This app is dockerized for easier setup and deployment. Follow these steps to ru
 2. Clone the repository to your local machine
     ```git clone https://github.com/mariamelkhashab16/instabug_clone.git
 3. Navigate to the project directory
+4. Attach .env file in the root directory of the project
 5. Start the Docker containers
+    ```docker-compose up
+    or
     ```sudo docker-compose up
-
+    for super user privilages
 
 ## Technicalities covered
 
