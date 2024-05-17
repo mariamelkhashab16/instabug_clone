@@ -17,3 +17,9 @@ This app is dockerized for easier setup and deployment. Follow these steps to ru
 3. Using elastic search to search for messages in a chat by message content
 4. Database level locking to handle race conditions
 5. Message queuing on chat and message creations using rails queing framwork: Active Job 
+
+## Future enhancements 
+
+1. User authentication
+2. Build the endpoints as a Golang app
+3. Write specs
